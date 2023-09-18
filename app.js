@@ -1,8 +1,10 @@
 const express=require("express")
-const bodyparser=require("body-parser")
+const cors=require("cors")
+const bodyParser=require("body-parser")
 const app=express();
 const UserRoutes=require("./routes/user")
-app.use(bodyparser.urlencoded({extended:false}))
+app.use(cors())
+app.use(bodyParser.json())
 
 app.use(UserRoutes)
-app.listen(3000)
+app.listen(5000);

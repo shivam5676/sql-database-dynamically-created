@@ -1,24 +1,70 @@
-const express=require("Express")
+const express = require("Express");
+const db = require("../util/database");
 
-const router=express.Router();
+const router = express.Router();
 
-router.get("/newtable",(req,res)=>{
-    //table will be fetched  and a add button will be added  here
-    res.send('<html><form action="/newtable" method="POST"><input name="tbname" placeholder="tbname"></input><input name="user" placeholder="name"></input><input name="id" placeholder="id number"></input><button type="submit">create table</button></form></html>')
-})
-router.post("/newtable",(req,res)=>{
-   //when user clicks on add table then this api will create a table with same input which is provide in form 
-   const body=req.body
-   var sql = `CREATE TABLE ${body.tbname} ( ${body.user} VARCHAR(255), ${body.id} VARCHAR(255))`;
-   console.log(sql)
-})
-router.get("/newuser",(req,res)=>{
-    //after creating table if user clics on any table then this add user button will be shown and here user list will also be fetched related to that table name 
-    res.send('<html><button>Add user</button></html>')
-})
+router.post("/newtable", (req, res) => {
+  db.query(`create table ${req.body.table}(${req.body.fields})`)
+    .then((response) => {
+      console.log(response);
+      res.status(200).json({ msg: "table succeessfully created" });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json(err.message);
+    });
+});
+router.post("/allTable", (req, res) => {
+  const dbname = req.body.dbname;
+  db.query(
+    `SELECT table_name FROM information_schema.tables WHERE table_schema = '${dbname}'`
+  )
+    .then((result) => {
+      const tables = result[0].map((row) => {
+        return row["TABLE_NAME"];
+      });
 
-router.get("/newuser",(req,res)=>{
-    //when user clicks on  add user button then user added to the same table using same input fields
-})
+      res.json({ tables });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  ``;
+});
+router.post("/allFields", (req, res) => {
+  const userTable = req.body.dbname;
 
-module.exports=router;
+  db.query(`select * from ${userTable}`)
+
+    .then((result) => {
+      console.log(result);
+      res.status(200).json({ tabledata: result[0], tableheader: result[1] });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+router.get("/saveuser", (req, res) => {
+  const dbtable = req.body;
+  db.query("insert into shivamdb VALUES ('shivam', '5676', 'mobile')")
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+router.post("/getuser", (req, res) => {
+  const userTable = req.body.dbname;
+
+  db.query(`select * from ${userTable}`)
+    .then((result) => {
+      console.log(result[0]);
+      res.status(200).json({ data: result[0] });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+module.exports = router;
