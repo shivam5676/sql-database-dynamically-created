@@ -44,9 +44,10 @@ router.post("/allFields", (req, res) => {
       console.log(err);
     });
 });
-router.get("/saveuser", (req, res) => {
+router.post("/saveuser", (req, res) => {
   const dbtable = req.body;
-  db.query("insert into shivamdb VALUES ('shivam', '5676', 'mobile')")
+  console.log(dbtable.tableData,dbtable.tableName)
+  db.query(`insert into ${dbtable.tableName} VALUES (${dbtable.tableData})`)
     .then((res) => {
       console.log(res);
     })
