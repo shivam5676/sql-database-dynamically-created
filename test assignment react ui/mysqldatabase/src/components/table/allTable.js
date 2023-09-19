@@ -6,12 +6,12 @@ const AllTable = (props) => {
     props.getDB(dbtablename);
   };
   const schema = "expense-database";
-  console.log(schema)
+  
   useEffect(() => {
     axios
       .post("http://localhost:5000/alltable", { dbname: schema })
       .then((response) => {
-        console.log(response)
+        
         const newarray = response.data.tables.map((current) => {
           return (
             <button

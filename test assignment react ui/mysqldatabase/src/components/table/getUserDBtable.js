@@ -9,7 +9,7 @@ const GetUserTable = (props) => {
         dbname: props.dbname,
       })
       .then((response) => {
-        console.log(response);
+        props.sendColumns(response.data.tableheader)
         let header = "<tr>";
         response.data.tableheader.map((current) => {
           header = `${header}<th>${current.name}</th>`;
